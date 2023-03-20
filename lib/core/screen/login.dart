@@ -4,17 +4,19 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_login/flutter_login.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 
 import 'package:my_app/components/button.dart';
 import 'package:my_app/components/google_btn.dart';
 import 'package:my_app/components/text_field_custom.dart';
+import 'package:my_app/core/auth/authentication_google_account.dart';
 import 'package:my_app/core/controller/login_controller.dart';
 import 'package:my_app/utils/helper/local_storage.dart';
 import 'package:validators/validators.dart';
 
 import '../../screens/url_screen.dart';
-import '../auth/auth.dart';
+import '../auth/authentication.dart';
 
 class Login extends StatelessWidget {
   Login({super.key});
@@ -29,28 +31,8 @@ class Login extends StatelessWidget {
       password: loginData.password,
     );
 
-    await loginSuccess(login);
+    await loginCon.loginSuccess(login);
     loginCon.loading(false);
-  }
-
-  Future<void> loginSuccess(bool login) async {
-    if (login) {
-      debugPrint("User : ${Authentication().currentUser}");
-      var user_id = await Authentication().currentUser?.uid;
-      LocalStorage().storeData(
-        key: "user_id",
-        value: user_id,
-      );
-      await Future.delayed(
-        const Duration(milliseconds: 800),
-        () {
-          loginCon.onClear();
-          Get.off(UrlScreen());
-        },
-      );
-    } else {
-      debugPrint("cannot login");
-    }
   }
 
   Future<void> signUp(LoginData loginData) async {
@@ -63,7 +45,7 @@ class Login extends StatelessWidget {
       title: "Congratulations",
       message: "Your account has been created successfully",
     );
-    await loginSuccess(login);
+    await loginCon.loginSuccess(login);
     loginCon.loading(false);
   }
 
@@ -185,9 +167,19 @@ class Login extends StatelessWidget {
                         ),
                         space,
                         or(),
-                        GoogleBtn(
+                        MediaBtn(
+                          onPressed: () async {
+                            // await GoogleSignInProvider().signInWithGoogle();
+                            await GoogleSignInProvider().googleLogin();
+                          },
+                          icon: FontAwesomeIcons.google,
+                          text: "Google",
+                        ),
+                        MediaBtn(
                           onPressed: () {},
-                        )
+                          icon: FontAwesomeIcons.facebook,
+                          text: "Facebook",
+                        ),
                       ],
                     ),
                   ),

@@ -49,6 +49,9 @@ class Authentication {
     }
   }
 
+  // Future<void> signInWithGoole()async{
+  //   await _firebaseAuth.
+  // }
   Future<bool> createUserWithEmailAndPassword({
     required String email,
     required String password,
@@ -70,6 +73,21 @@ class Authentication {
 
   Future<void> signOut() async {
     await _firebaseAuth.signOut();
+  }
+
+  Future<bool> signInWithCredential({
+    required AuthCredential credential,
+  }) async {
+    try {
+      await _firebaseAuth.signInWithCredential(credential);
+      return true;
+    } on FirebaseAuthException catch (error) {
+      debugPrint(
+        'CatchError when signInWithCredential this is error : >> $error',
+      );
+      snackBarError(error);
+      return false;
+    }
   }
 }
 

@@ -1,13 +1,16 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:my_app/components/button.dart';
 import 'package:my_app/components/button_nobg.dart';
 import 'package:my_app/components/text_field_custom.dart';
 import 'package:my_app/controller/url_screen_crontroller.dart';
-import 'package:my_app/core/auth/auth.dart';
+
 import 'package:my_app/core/screen/login.dart';
 import 'package:my_app/screens/web_view.dart';
 import 'package:my_app/utils/helper/local_storage.dart';
+
+import '../core/auth/authentication.dart';
 
 class UrlScreen extends StatelessWidget {
   const UrlScreen({super.key});
@@ -15,6 +18,7 @@ class UrlScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var con = Get.put(UrlController());
+    User userInfor = Authentication().currentUser!;
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: SafeArea(
@@ -69,6 +73,11 @@ class UrlScreen extends StatelessWidget {
                   con.textCon.value.text =
                       "https://${con.textCon.value.text}.com";
                 },
+              ),
+              const SizedBox(height: 30),
+              Text(
+                "Email: ${userInfor.email}",
+                style: Theme.of(context).textTheme.headlineSmall,
               ),
             ],
           ),
