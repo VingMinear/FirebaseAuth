@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
+import 'package:my_app/screens/profile_screen.dart';
 
-import '../../screens/url_screen.dart';
 import '../../utils/helper/local_storage.dart';
 import '../auth/authentication.dart';
 
@@ -13,6 +13,7 @@ class LoginController extends GetxController {
   var isPassCorrect = false.obs;
   var loading = false.obs;
   var loadingSplashScreen = false.obs;
+  var switchMode = false.obs;
   void onClear() {
     isPassCorrect(false);
     isEmailCorrect(false);
@@ -21,6 +22,7 @@ class LoginController extends GetxController {
   }
 
   Future<void> loginSuccess(bool login) async {
+    loading(true);
     if (login) {
       debugPrint("User : ${Authentication().currentUser}");
       var user_id = await Authentication().currentUser?.uid;
@@ -32,11 +34,17 @@ class LoginController extends GetxController {
         const Duration(milliseconds: 800),
         () {
           onClear();
-          Get.off(UrlScreen());
+          Get.off(ProfileScreen());
         },
       );
     } else {
       debugPrint("cannot login");
     }
+    Future.delayed(
+      const Duration(milliseconds: 800),
+      () {
+        loading(false);
+      },
+    );
   }
 }

@@ -41,14 +41,14 @@ class MyTextField extends StatelessWidget {
         decoration: InputDecoration(
           suffixIcon: icon,
           filled: true,
-          fillColor: Colors.white.withOpacity(0.85),
+          fillColor: Colors.white,
           hintText: hintText ?? 'Paste Url here..https://......... ',
           hintStyle: TextStyle(color: Colors.grey.withOpacity(.75)),
           contentPadding:
               const EdgeInsets.symmetric(vertical: 0.0, horizontal: 20.0),
           border: OutlineInputBorder(
             borderSide:
-                BorderSide(color: Colors.grey.withOpacity(.75), width: 1.0),
+                BorderSide(color: Theme.of(context).cardColor, width: 1.0),
             borderRadius: const BorderRadius.all(Radius.circular(10.0)),
           ),
           focusedBorder: OutlineInputBorder(

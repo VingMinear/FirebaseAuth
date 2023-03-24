@@ -40,24 +40,23 @@ class LocalStorage {
   }
 
   // get data
-  Future<String> getStringData({required String key}) async =>
-      await _preferences!.getString(key) ?? "";
-  Future<int> getIntData({required String key}) async =>
-      await _preferences!.getInt(key) ?? 0;
-  Future<double> getDoubleData({required String key}) async =>
-      await _preferences!.getDouble(key) ?? 0;
-  Future<bool> getBoolData({required String key}) async =>
-      await _preferences!.getBool(key) ?? false;
+  String getStringData({required String key}) =>
+      _preferences!.getString(key) ?? "";
+  int getIntData({required String key}) => _preferences!.getInt(key) ?? 0;
+  double getDoubleData({required String key}) =>
+      _preferences!.getDouble(key) ?? 0;
+  bool getBoolData({required String key}) =>
+      _preferences!.getBool(key) ?? false;
 
   // clear data
-  Future<void> clearData() async {
-    await _preferences!.clear();
+  void clearData() {
+    _preferences!.clear();
   }
 
   // remove data
-  Future<void> removeData({
+  void removeData({
     required String key,
-  }) async {
-    await _preferences!.remove(key);
+  }) {
+    _preferences!.remove(key);
   }
 }

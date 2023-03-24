@@ -8,17 +8,13 @@ class Button extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const primaryColor = Color(0xff4338CA);
-    const secondaryColor = Color(0xff6D28D9);
-    const accentColor = Color(0xffffffff);
-
     const double borderRadius = 15;
 
     return DecoratedBox(
         decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(borderRadius),
-            gradient:
-                const LinearGradient(colors: [primaryColor, secondaryColor])),
+          borderRadius: BorderRadius.circular(borderRadius),
+          color: Theme.of(context).cardColor,
+        ),
         child: ElevatedButton(
           style: ButtonStyle(
               elevation: MaterialStateProperty.all(0),
@@ -33,7 +29,8 @@ class Button extends StatelessWidget {
           onPressed: onPressed,
           child: Text(
             text,
-            style: const TextStyle(color: accentColor, fontSize: 16),
+            style:
+                TextStyle(color: Theme.of(context).primaryColor, fontSize: 16),
           ),
         ));
   }

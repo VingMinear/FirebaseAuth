@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-class MediaBtn extends StatelessWidget {
+class SocailButton extends StatelessWidget {
   final Function() onPressed;
-  const MediaBtn({
+  const SocailButton({
     required this.onPressed,
     Key? key,
     required this.icon,
@@ -25,7 +25,7 @@ class MediaBtn extends StatelessWidget {
               blurRadius: 10,
             ),
           ],
-          color: Colors.white,
+          color: Theme.of(context).cardColor,
         ),
         child: TextButton(
           style: ButtonStyle(
@@ -34,11 +34,18 @@ class MediaBtn extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              FaIcon(icon),
+              FaIcon(
+                icon,
+                color: Theme.of(context).primaryColor,
+              ),
               const SizedBox(
                 width: 10,
               ),
-              Text(text, style: TextStyle(color: Colors.black, fontSize: 16)),
+              Text(
+                text,
+                style: TextStyle(
+                    color: Theme.of(context).primaryColor, fontSize: 16),
+              ),
             ],
           ),
           onPressed: onPressed,

@@ -1,7 +1,4 @@
-import 'dart:math';
-
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:my_app/core/auth/authentication.dart';
@@ -10,7 +7,9 @@ import '../../firebase_options.dart';
 import '../controller/login_controller.dart';
 
 class GoogleSignInProvider {
-  final googleSignIn = GoogleSignIn();
+  final googleSignIn = GoogleSignIn(
+    clientId: DefaultFirebaseOptions.currentPlatform.iosClientId,
+  );
   GoogleSignInAccount? _user;
   GoogleSignInAccount get user {
     return _user!;
@@ -23,23 +22,25 @@ class GoogleSignInProvider {
 
   Future<void> googleLogin() async {
     // maybe bc of platofrm fix tmr;`~
-    final googleUser = await GoogleSignIn(
-            clientId: DefaultFirebaseOptions.currentPlatform.iosClientId)
-        .signIn();
-    debugPrint('end 1 ');
+    // final googleUser = await GoogleSignIn(
+    //         clientId: DefaultFirebaseOptions.currentPlatform.iosClientId)
+    //     .signIn();
+    final loginCon = Get.put(LoginController());
+    loginCon.loading(true);
+    final googleUser = await googleSignIn.signIn();
+
     if (googleUser == null) {
+      loginCon.loading(false);
       return;
     } else {
       _user = googleUser;
     }
     final googleAuth = await googleUser.authentication;
-    debugPrint('2 : ${googleAuth.accessToken}');
     final credential = GoogleAuthProvider.credential(
       accessToken: googleAuth.accessToken,
       idToken: googleAuth.idToken,
     );
-    debugPrint("token: ${googleAuth.accessToken}");
-    final loginCon = Get.put(LoginController());
+
     final login =
         await Authentication().signInWithCredential(credential: credential);
     loginCon.loginSuccess(login);

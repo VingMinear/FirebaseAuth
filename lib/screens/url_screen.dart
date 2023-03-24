@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:my_app/components/button.dart';
@@ -6,11 +5,7 @@ import 'package:my_app/components/button_nobg.dart';
 import 'package:my_app/components/text_field_custom.dart';
 import 'package:my_app/controller/url_screen_crontroller.dart';
 
-import 'package:my_app/core/screen/login.dart';
 import 'package:my_app/screens/web_view.dart';
-import 'package:my_app/utils/helper/local_storage.dart';
-
-import '../core/auth/authentication.dart';
 
 class UrlScreen extends StatelessWidget {
   const UrlScreen({super.key});
@@ -18,9 +13,11 @@ class UrlScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var con = Get.put(UrlController());
-    User userInfor = Authentication().currentUser!;
+
     return Scaffold(
       resizeToAvoidBottomInset: false,
+      backgroundColor: Color(0xFF111111),
+      appBar: AppBar(),
       body: SafeArea(
         child: Container(
           alignment: Alignment.center,
@@ -75,31 +72,9 @@ class UrlScreen extends StatelessWidget {
                 },
               ),
               const SizedBox(height: 30),
-              Text(
-                "Email: ${userInfor.email}",
-                style: Theme.of(context).textTheme.headlineSmall,
-              ),
             ],
           ),
         ),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.indigo,
-          fixedSize: Size(150, 40),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-        ),
-        child: Text(
-          "LogOut",
-        ),
-        onPressed: () async {
-          await LocalStorage().removeData(key: "user_id");
-          await Authentication().signOut();
-          Get.off(Login());
-        },
       ),
     );
   }

@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class Authentication {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
@@ -28,7 +29,6 @@ class Authentication {
     );
   }
 
-  Stream<User?> get authStateChanges => _firebaseAuth.authStateChanges();
   Future<bool> signInWithEmailAndPassword({
     required String email,
     required String password,
@@ -39,10 +39,13 @@ class Authentication {
         password: password,
       );
 
+      currentUser!.providerData.asMap().entries.map((e) {
+        debugPrint("Value use : ${e.value}");
+      }).toList();
       return true;
     } on FirebaseAuthException catch (error) {
       debugPrint(
-        'CatchError when signInWithEmailAndPassword this is error : >> $error',
+        'CatchError when signInWithEmailAndPassword this is error : >> ${error.message!.trim()}',
       );
       snackBarError(error);
       return false;
@@ -72,7 +75,27 @@ class Authentication {
   }
 
   Future<void> signOut() async {
-    await _firebaseAuth.signOut();
+    try {
+      await _firebaseAuth.signOut();
+      await GoogleSignIn().signOut();
+    } on FirebaseAuthException catch (error) {
+      debugPrint(
+        'CatchError in signOut this is error : >> $error',
+      );
+    }
+  }
+
+  resetPassword({required String email}) async {
+    try {
+      await _firebaseAuth.sendPasswordResetEmail(email: email);
+      return true;
+    } on FirebaseAuthException catch (error) {
+      debugPrint(
+        'CatchError when signInWithCredential this is error : >> $error',
+      );
+      snackBarError(error);
+      return false;
+    }
   }
 
   Future<bool> signInWithCredential({
