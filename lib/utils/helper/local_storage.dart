@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:shared_preferences/shared_preferences.dart';
 
 enum DataType {
@@ -19,7 +17,6 @@ class LocalStorage {
 
   //store data
   Future<void> storeData({required String key, required dynamic value}) async {
-    log("CHeck datatype : ${value.runtimeType}");
     switch (value.runtimeType) {
       case String:
         await _preferences!.setString(key, value);

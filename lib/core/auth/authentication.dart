@@ -2,6 +2,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:my_app/core/auth/cloud_fire_store.dart';
+import 'package:my_app/core/controller/login_controller.dart';
+import 'package:my_app/model/user_model/user_model.dart';
 
 class Authentication {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
@@ -9,13 +12,13 @@ class Authentication {
     return _firebaseAuth.currentUser;
   }
 
-  static snackBarError(FirebaseAuthException error) {
+  static snackBarError(String message) {
     Get.snackbar(
       backgroundColor: Colors.red,
       colorText: Colors.white,
       duration: Duration(milliseconds: 1500),
       "Ops Sorry",
-      "${error.code}",
+      "${message}",
     );
   }
 
@@ -47,7 +50,7 @@ class Authentication {
       debugPrint(
         'CatchError when signInWithEmailAndPassword this is error : >> ${error.message!.trim()}',
       );
-      snackBarError(error);
+      snackBarError(error.code);
       return false;
     }
   }
@@ -64,12 +67,17 @@ class Authentication {
         email: email,
         password: password,
       );
+      UserModel userInfo = LoginController.getUserInforAfterLogin();
+      await CloudFireStore().addUserInformation(
+        docId: currentUser!.uid,
+        userInfo: userInfo,
+      );
       return true;
     } on FirebaseAuthException catch (error) {
       debugPrint(
         'CatchError when createUserWithEmailAndPassword this is error : >> $error',
       );
-      snackBarError(error);
+      snackBarError(error.code);
       return false;
     }
   }
@@ -93,7 +101,7 @@ class Authentication {
       debugPrint(
         'CatchError when signInWithCredential this is error : >> $error',
       );
-      snackBarError(error);
+      snackBarError(error.code);
       return false;
     }
   }
@@ -108,7 +116,7 @@ class Authentication {
       debugPrint(
         'CatchError when signInWithCredential this is error : >> $error',
       );
-      snackBarError(error);
+      snackBarError(error.code);
       return false;
     }
   }

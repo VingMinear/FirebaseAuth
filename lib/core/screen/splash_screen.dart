@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
-import 'package:my_app/screens/profile_screen.dart';
+import 'package:my_app/config/route.dart';
+import 'package:my_app/core/controller/login_controller.dart';
 
 import '../../utils/helper/local_storage.dart';
-import 'login.dart';
+import '../../utils/helper/permission.dart';
+import '../auth/cloud_fire_store.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -31,10 +32,15 @@ class _SplashScreenState extends State<SplashScreen> {
     user_id = await LocalStorage().getStringData(key: "user_id");
     debugPrint("print user_id: " + user_id);
     if (user_id.isEmpty) {
-      Get.off(() => Login());
+      router.go('/login');
     } else {
-      Get.off(() => ProfileScreen());
+      LoginController.userInformation = await CloudFireStore.getUser(
+        docId: user_id,
+      );
+      LoginController().updatePhoto();
+      router.go('/profile');
     }
+    await PermissionService.askPermissionNotification();
   }
 
   @override

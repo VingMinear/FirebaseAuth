@@ -16,7 +16,7 @@ class ThemeService {
     primaryColor: AppColor.darkColor,
     cardColor: Colors.white,
     appBarTheme: AppBarTheme(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColor.darkColor,
     ),
     dividerColor: Colors.white,
   );

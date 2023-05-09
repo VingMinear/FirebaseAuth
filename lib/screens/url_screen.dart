@@ -5,7 +5,7 @@ import 'package:my_app/components/button_nobg.dart';
 import 'package:my_app/components/text_field_custom.dart';
 import 'package:my_app/controller/url_screen_crontroller.dart';
 
-import 'package:my_app/screens/web_view.dart';
+import '../config/route.dart';
 
 class UrlScreen extends StatelessWidget {
   const UrlScreen({super.key});
@@ -52,9 +52,8 @@ class UrlScreen extends StatelessWidget {
                     text: "Next",
                     onPressed: () {
                       if (con.textCon.value.text.isNotEmpty) {
-                        Get.to(
-                          const WebView(),
-                        );
+                        router.push("/webview");
+
                         con.loadingWebView(true);
                       } else {
                         debugPrint("empty");

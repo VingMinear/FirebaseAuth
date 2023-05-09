@@ -6,7 +6,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
-import 'package:my_app/utils/theme/theme_service.dart';
+import 'package:my_app/config/route.dart';
+import 'package:my_app/utils/helper/permission.dart';
 import 'package:validators/validators.dart';
 
 import 'package:my_app/components/button.dart';
@@ -14,15 +15,33 @@ import 'package:my_app/components/socail_button.dart';
 import 'package:my_app/components/text_field_custom.dart';
 import 'package:my_app/core/auth/authentication_google_account.dart';
 import 'package:my_app/core/controller/login_controller.dart';
-import 'package:my_app/core/screen/forgot_pass.dart';
 
+import '../../utils/theme/theme_service.dart';
 import '../auth/authentication.dart';
 
-class Login extends StatelessWidget {
+class Login extends StatefulWidget {
   Login({super.key});
+
+  @override
+  State<Login> createState() => _LoginState();
+}
+
+class _LoginState extends State<Login> {
+  @override
+  void initState() {
+    request();
+    super.initState();
+  }
+
+  void request() async {
+    debugPrint("Requesting");
+    await PermissionService.askPermissionNotification();
+  }
+
   final User? user = Authentication().currentUser;
   final GlobalKey<FormState> frmKey = GlobalKey<FormState>();
   final loginCon = Get.put(LoginController());
+
   Future<void> _login(LoginData loginData) async {
     log("LoginData :$loginData");
 
@@ -43,10 +62,37 @@ class Login extends StatelessWidget {
     //   title: "Congratulations",
     //   message: "Your account has been created successfully",
     // );
+
     await loginCon.loginSuccess(login);
   }
 
+//---------loginnnnn--------------------------------
   final space = const SizedBox(height: 20);
+  login() {
+    FocusScope.of(context).unfocus();
+    var email = loginCon.txtEmail.text;
+    var pass = loginCon.txtPass.text;
+    var isEmailCorr = loginCon.isEmailCorrect.value;
+    var isPassCorr = loginCon.isPassCorrect.value;
+    Future.delayed(
+      const Duration(milliseconds: 350),
+      () {
+        if (isPassCorr && isEmailCorr) {
+          var data = LoginData(name: email, password: pass);
+          if (loginCon.textBtn.value.toLowerCase() == "login") {
+            // have account
+            _login(data);
+          } else {
+            // no account
+            signUp(data);
+          }
+        } else {
+          frmKey.currentState!.validate();
+        }
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -60,15 +106,7 @@ class Login extends StatelessWidget {
           ),
         ),
         actions: [
-          Obx(
-            () => Switch.adaptive(
-              value: loginCon.switchMode.value,
-              onChanged: (value) {
-                loginCon.switchMode(value);
-                ThemeService().switchMode(value);
-              },
-            ),
-          ),
+          SwitchMode(),
           const SizedBox(width: 20),
         ],
       ),
@@ -117,6 +155,9 @@ class Login extends StatelessWidget {
                                 loginCon.isPassCorrect(false);
                               }
                             },
+                            onFieldSubmitted: (value) {
+                              login();
+                            },
                             validator: (p0) {
                               if (p0!.isEmpty) return "Please Input Password";
                               return null;
@@ -132,7 +173,7 @@ class Login extends StatelessWidget {
                           InkWell(
                             onTap: () {
                               loginCon.onClear();
-                              Get.to(() => ForgotPassword());
+                              router.push("/forgotpassword");
                             },
                             child: Text(
                               "Forgot Password ?",
@@ -144,30 +185,7 @@ class Login extends StatelessWidget {
                           ),
                           space,
                           Button(
-                            onPressed: () {
-                              FocusScope.of(context).unfocus();
-                              var email = loginCon.txtEmail.text;
-                              var pass = loginCon.txtPass.text;
-                              var isEmailCorr = loginCon.isEmailCorrect.value;
-                              var isPassCorr = loginCon.isPassCorrect.value;
-                              Future.delayed(
-                                const Duration(milliseconds: 350),
-                                () {
-                                  if (isPassCorr && isEmailCorr) {
-                                    var data =
-                                        LoginData(name: email, password: pass);
-                                    if (loginCon.textBtn.value.toLowerCase() ==
-                                        "login") {
-                                      _login(data);
-                                    } else {
-                                      signUp(data);
-                                    }
-                                  } else {
-                                    frmKey.currentState!.validate();
-                                  }
-                                },
-                              );
-                            },
+                            onPressed: login,
                             text: loginCon.textBtn.value,
                           ),
                           space,
@@ -257,6 +275,25 @@ class Loading extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: CircularProgressIndicator(),
+    );
+  }
+}
+
+class SwitchMode extends StatelessWidget {
+  const SwitchMode({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final loginCon = Get.put(LoginController());
+    return Obx(
+      () => Switch.adaptive(
+        value: loginCon.switchMode.value,
+        onChanged: (value) {
+          loginCon.switchMode(value);
+
+          ThemeService().switchMode(value);
+        },
+      ),
     );
   }
 }

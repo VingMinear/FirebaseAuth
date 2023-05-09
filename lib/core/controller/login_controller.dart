@@ -1,9 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
+import 'package:my_app/config/route.dart';
 import 'package:my_app/screens/profile_screen.dart';
-
+import '../../model/user_model/user_model.dart';
+import '../../utils/helper/image_picker.dart';
 import '../../utils/helper/local_storage.dart';
 import '../auth/authentication.dart';
+import '../auth/cloud_fire_store.dart';
 
 class LoginController extends GetxController {
   var txtEmail = TextEditingController();
@@ -21,20 +24,32 @@ class LoginController extends GetxController {
     txtPass.text = "";
   }
 
+  final imageCon = Get.put(ImagePickerProvider());
+  static UserModel userInformation = UserModel();
+  updatePhoto() {
+    imageCon.imageUrl(userInformation.photo);
+  }
+
   Future<void> loginSuccess(bool login) async {
     loading(true);
     if (login) {
       debugPrint("User : ${Authentication().currentUser}");
-      var user_id = await Authentication().currentUser?.uid;
+      var user_id = Authentication().currentUser?.uid;
       LocalStorage().storeData(
         key: "user_id",
         value: user_id,
+      );
+      userInformation = LoginController.getUserInforAfterLogin();
+      updatePhoto();
+      await CloudFireStore().addUserInformation(
+        docId: userInformation.id!,
+        userInfo: userInformation,
       );
       await Future.delayed(
         const Duration(milliseconds: 800),
         () {
           onClear();
-          Get.off(ProfileScreen());
+          router.go('/profile');
         },
       );
     } else {
@@ -45,6 +60,17 @@ class LoginController extends GetxController {
       () {
         loading(false);
       },
+    );
+  }
+
+  static UserModel getUserInforAfterLogin() {
+    Authentication obj = Authentication();
+    return UserModel(
+      email: obj.currentUser?.email ?? "",
+      id: obj.currentUser?.uid ?? "",
+      name: obj.currentUser?.displayName ?? "",
+      photo: obj.currentUser?.photoURL ?? "",
+      provide: "- -",
     );
   }
 }

@@ -7,7 +7,7 @@ class MyTextField extends StatelessWidget {
   final Widget? icon;
   final String? Function(String?)? validator;
   final Function(String)? onChanged;
-
+  final ValueChanged<String>? onFieldSubmitted;
   final TextInputType? keyboardType;
   const MyTextField({
     Key? key,
@@ -18,6 +18,7 @@ class MyTextField extends StatelessWidget {
     this.icon,
     this.validator,
     this.onChanged,
+    this.onFieldSubmitted,
   }) : super(key: key);
 
   @override
@@ -32,6 +33,7 @@ class MyTextField extends StatelessWidget {
             color: Colors.grey.withOpacity(.1)),
       ]),
       child: TextFormField(
+        onFieldSubmitted: onFieldSubmitted,
         controller: inputController,
         onChanged: onChanged,
         validator: validator,

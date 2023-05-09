@@ -1,12 +1,11 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:my_app/components/button.dart';
 import 'package:my_app/components/text_field_custom.dart';
 import 'package:my_app/controller/user_controller.dart';
+import 'package:my_app/core/auth/cloud_fire_store.dart';
 import 'package:my_app/core/screen/login.dart';
-import 'package:my_app/model/user_model/user_model.dart';
+import 'package:my_app/model/user_model/members.dart';
 import 'package:my_app/screens/profile_screen.dart';
 
 class AddUser extends StatelessWidget {
@@ -15,6 +14,7 @@ class AddUser extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var userCon = Get.put(UserController());
+    var cloudCon = Get.put(CloudFireStore());
     userCon.onClear();
     return Scaffold(
       appBar: AppBar(
@@ -35,13 +35,13 @@ class AddUser extends StatelessWidget {
                       ),
                       space,
                       MyTextField(
-                        inputController: userCon.email,
-                        hintText: "Email",
+                        inputController: userCon.age,
+                        hintText: "age",
                       ),
                       space,
                       MyTextField(
-                        inputController: userCon.photoUrl,
-                        hintText: "Photo URL",
+                        inputController: userCon.email,
+                        hintText: "Email",
                       ),
                       space,
                       Button(
@@ -49,14 +49,16 @@ class AddUser extends StatelessWidget {
                         onPressed: () {
                           var name = userCon.name.text;
                           var email = userCon.email.text;
-                          var photoUrl = userCon.photoUrl.text;
-                          var id = Random().nextInt(999);
+                          var age = userCon.age.text;
+                          var id = cloudCon.allMembers.value + 1;
+                          debugPrint("id leng $id");
                           if (name.isNotEmpty && email.isNotEmpty) {
-                            userCon.addUser(
-                              userInfo: UserModel(
+                            userCon.addMembers(
+                              docId: id.toString(),
+                              membersInfo: MembersModel(
                                 name: name,
                                 email: email,
-                                photoUrl: photoUrl,
+                                age: age,
                                 id: id.toString(),
                               ),
                             );
